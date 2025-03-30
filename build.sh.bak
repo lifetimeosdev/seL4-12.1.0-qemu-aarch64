@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e
+rm -rf ./build
+mkdir -p ./build
+
+CC=gcc
+CFLAGS="-O0 -g -ggdb -m64 -march=nehalem -std=c2x -Wall -Werror \
+	-Wstrict-prototypes -Wmissing-prototypes \
+	-Wnested-externs -Wmissing-declarations \
+	-Wundef -Wpointer-arith -Wno-nonnull \
+	-ffreestanding -fno-stack-protector \
+	-fno-asynchronous-unwind-tables -fno-common \
+	-nostdinc -nostdlib -fno-builtin -fno-pic \
+	-fno-pie -mcmodel=kernel \
+	-mno-mmx -mno-sse -mno-sse2 -mno-3dnow"
+
+LDS="-T linker.lds"
+
+$CC -c $CFLAGS -o ./build/head.o head.S
+$CC -c $CFLAGS -o ./build/kernel.o kernel.c
+$CC  $CFLAGS ./build/*.o -o ./build/kernel.elf $LDS
